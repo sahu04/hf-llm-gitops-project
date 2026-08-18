@@ -6,7 +6,7 @@ metadata:
   labels:
     app: hf-llm-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: hf-llm-api
@@ -15,14 +15,12 @@ spec:
       labels:
         app: hf-llm-api
       annotations:
-        # Fallback scrape config if you are NOT using the Prometheus Operator
-        # (if you use ServiceMonitor instead, these annotations are optional/ignored)
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
         prometheus.io/path: "/metrics"
     spec:
       serviceAccountName: hf-llm-sa
-      automountServiceAccountToken: false   # least privilege: pod doesn't need the API token
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -31,21 +29,21 @@ spec:
           type: RuntimeDefault
       containers:
         - name: hf-llm-api
-          image: ghcr.io/YOUR_GITHUB_USERNAME/hf-llm-api:latest   # replace with your image
-          imagePullPolicy: Always
+          image: hf-llm-api:local
+          imagePullPolicy: Never
           ports:
             - containerPort: 8000
               name: http
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false   # HF model cache needs write access; see emptyDir volume below
+            readOnlyRootFilesystem: false
             capabilities:
               drop: ["ALL"]
           env:
             - name: MODEL_NAME
               value: "distilgpt2"
             - name: MAX_NEW_TOKENS
-              value: "50"
+              value: "80"
             - name: API_KEY
               valueFrom:
                 secretKeyRef:
@@ -62,7 +60,7 @@ spec:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 30   # model load takes time on first boot
+            initialDelaySeconds: 30
             periodSeconds: 10
             failureThreshold: 3
           livenessProbe:
