@@ -1,26 +1,26 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: hf-llm-api
-  namespace: hf-llm
-  annotations:
-    # Requires cert-manager installed in the cluster (free, open-source)
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - hf-llm.example.com   # replace with your domain
-      secretName: hf-llm-tls
-  rules:
-    - host: hf-llm.example.com   # replace with your domain
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: hf-llm-api
-                port:
-                  number: 8000
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: hf-llm-api
+#   namespace: hf-llm
+#   annotations:
+#     # Requires cert-manager installed in the cluster (free, open-source)
+#     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+# spec:
+#   ingressClassName: nginx
+#   tls:
+#     - hosts:
+#         - hf-llm.example.com   # replace with your domain
+#       secretName: hf-llm-tls
+#   rules:
+#     - host: hf-llm.example.com   # replace with your domain
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: hf-llm-api
+#                 port:
+#                   number: 8000
