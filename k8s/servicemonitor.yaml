@@ -1,0 +1,22 @@
+# Requires the Prometheus Operator (kube-prometheus-stack) installed in the cluster.
+# If you're using plain Prometheus instead, use the prometheus.io/* pod annotations
+# already included in k8s/deployment.yaml — you don't need this file in that case.
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hf-llm-api
+  namespace: hf-llm
+  labels:
+    release: prometheus   # must match the label your Prometheus instance selects on
+spec:
+  selector:
+    matchLabels:
+      app: hf-llm-api
+  namespaceSelector:
+    matchNames:
+      - hf-llm
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

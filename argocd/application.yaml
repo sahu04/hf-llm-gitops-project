@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hf-llm-api
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/YOUR_GITHUB_USERNAME/hf-llm-gitops-project.git   # replace with your repo
+    targetRevision: main
+    path: k8s   # points at the kustomization.yaml folder
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hf-llm
+
+  syncPolicy:
+    automated:
+      prune: true       # remove resources deleted from Git
+      selfHeal: true    # revert manual cluster changes back to match Git
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m

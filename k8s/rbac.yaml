@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hf-llm
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hf-llm-sa
+  namespace: hf-llm
+# No Role/RoleBinding is attached — this app needs zero Kubernetes API access.
+# automountServiceAccountToken is also set to false on the pod spec, so even
+# the default token is not mounted. This is the least-privilege pattern:
+# only grant API permissions a workload actually needs, which for a pure
+# inference API is none at all.

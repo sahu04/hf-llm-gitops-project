@@ -1,0 +1,40 @@
+{
+  "title": "HF LLM API",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Request Rate (req/s)",
+      "targets": [
+        { "expr": "sum(rate(http_requests_total{app=\"hf-llm-api\"}[5m]))" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    },
+    {
+      "type": "graph",
+      "title": "P95 Latency (s)",
+      "targets": [
+        { "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{app=\"hf-llm-api\"}[5m])) by (le))" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }
+    },
+    {
+      "type": "graph",
+      "title": "Error Rate (5xx)",
+      "targets": [
+        { "expr": "sum(rate(http_requests_total{app=\"hf-llm-api\", status=~\"5..\"}[5m]))" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+    },
+    {
+      "type": "graph",
+      "title": "Pod Memory Usage",
+      "targets": [
+        { "expr": "sum(container_memory_working_set_bytes{namespace=\"hf-llm\", pod=~\"hf-llm-api.*\"}) by (pod)" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+    }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}
